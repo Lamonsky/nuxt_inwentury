@@ -24,10 +24,11 @@ interface Inwentura {
   };
   currentWorkersNumber: number;
   maxWorkersNumber: number;
+  projectLocation: string;
   distance?: number; // Dodano pole distance
 }
 
-let list_inwentury: Inwentura[] = [];
+const list_inwentury = ref<Inwentura[]>([]);
 
 
 let isLoading = true; // Dodano zmienną śledzącą stan ładowania
@@ -49,12 +50,12 @@ const fetchData = async () => {
       // Sprawdzenie, czy dane są poprawne
       if (response.length > 0 && Array.isArray(response)) {
       for (const element of response) {
-        const inwentura_address = element.project.city.name;
-        const inwentura_coordinates = await getCoordinates(inwentura_address);
+        //const inwentura_address = element.project.city.name;
+        //const inwentura_coordinates = await getCoordinates(inwentura_address);
 
-        const distance = calculateDistance(myCoordinates, inwentura_coordinates);
-
-        list_inwentury.push({
+        //const distance = calculateDistance(myCoordinates, inwentura_coordinates);
+        const distance = 0;
+        list_inwentury.value.push({
           id: element.id,
           name: element.name,
           project: {
@@ -62,7 +63,7 @@ const fetchData = async () => {
               name: element.project.customer.name,
             },
             customerType: element.project.customerType,
-            contractDate: new Date(element.project.contractDate).toISOString().replace('T', ' ').slice(0, 16),
+            contractDate: new Date(element.project.contractDate).toLocaleString('pl-PL'),
             address: element.project.address,
             city: {
               name: element.project.city.name,
@@ -70,6 +71,7 @@ const fetchData = async () => {
           },
           currentWorkersNumber: element.currentWorkersNumber,
           maxWorkersNumber: element.maxWorkersNumber,
+          projectLocation: element.projectLocation.name,
           distance: distance,
         });
         
@@ -109,6 +111,7 @@ fetchData();
               <p>Current Workers Number: {{ inwentura.currentWorkersNumber }}</p>
               <p>Max Workers Number: {{ inwentura.maxWorkersNumber }}</p>
               <p>Customer Type: {{ inwentura.project.customerType }}</p>
+              <p>Project Location: {{ inwentura.projectLocation }}</p>
               <p>Distance: {{ inwentura.distance }}</p>
               <a class="justify-self-end" :href="`${externalLink}/${inwentura.id}`" target="_blank">
                 <button class="btn btn-primary ">
