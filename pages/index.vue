@@ -16,7 +16,7 @@ interface Inwentura {
       name: string;
     };
     customerType: string;
-    contractDate: string;
+    contractDate: Date;
     address: string;
     city: {
       name: string;
@@ -28,7 +28,7 @@ interface Inwentura {
   distance?: number; // Dodano pole distance
 }
 
-const list_inwentury = ref<Inwentura[]>([]);
+let list_inwentury = ref<Inwentura[]>([]);
 
 
 let isLoading = true; // Dodano zmienną śledzącą stan ładowania
@@ -63,7 +63,7 @@ const fetchData = async () => {
               name: element.project.customer.name,
             },
             customerType: element.project.customerType,
-            contractDate: new Date(element.project.contractDate).toLocaleString('pl-PL'),
+            contractDate: element.project.contractDate,
             address: element.project.address,
             city: {
               name: element.project.city.name,
@@ -82,15 +82,45 @@ const fetchData = async () => {
     }
 
     // Sortowanie listy po contractorDate
-    list_inwentury.sort((a, b) => new Date(a.project.contractDate).getTime() - new Date(b.project.contractDate).getTime());
+    list_inwentury.value.sort((a, b) => {
+      console.log('A:', a.name, a.project.contractDate);
+      console.log('B:', b.name, b.project.contractDate);
+      const dateA = new Date(a.project.contractDate).getTime() || 0;
+      console.log('Date A:', dateA);
+      const dateB = new Date(b.project.contractDate).getTime() || 0;
+      console.log('Date B:', dateB);
+      if (dateA > dateB) {
+        return 1;
+      }
+      if (dateA < dateB) {
+        return -1;
+      }
+      return dateA - dateB;
+    });
+
+    list_inwentury.value.forEach((inwentura) => {
+      // Obliczanie odległości dla każdego elementu
+      inwentura.project.contractDate = formatDateToString(new Date(inwentura.project.contractDate));
+    });
 
   } catch (error) {
     console.error('Error fetching data:', error);
   } finally {
     isLoading = false; // Ustawienie na false po zakończeniu ładowania
-    console.log('Data fetching completed. List:', list_inwentury.length);
+    console.log('Data fetching completed. List:', list_inwentury.value.length);
   }
 };
+
+
+function formatDateToString(date: Date): string {
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(date.getUTCDate()).padStart(2, '0');
+  const hours = String(date.getUTCHours()).padStart(2, '0');
+  const minutes = String(date.getUTCMinutes()).padStart(2, '0');
+  const seconds = String(date.getUTCSeconds()).padStart(2, '0');
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+}
 
 // Wywołanie funkcji fetchData
 fetchData();
