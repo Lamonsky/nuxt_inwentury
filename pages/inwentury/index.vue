@@ -144,7 +144,8 @@ fetchData();
         v-model="searchQuery"
         v-on:input="filterData"
       />
-      <div class="flex flex-wrap justify-start overflow-x-auto rounded-box border border-base-content/5 m-2 bg-base-100">
+      <div class="rounded-box border border-base-content/5 m-2 bg-base-100
+      h-[75vh] overflow-y-auto">
         <table class="table">
             <thead>
                 <tr>
@@ -159,7 +160,8 @@ fetchData();
                     <th>Action</th>
                 </tr>
             </thead>
-            <tbody v-for="inwentura in filtered_list_inwentury" :key="inwentura.id" >
+            <tbody v-for="inwentura in filtered_list_inwentury" :key="inwentura.id"
+            >
                 <tr>
                     <td>{{ inwentura.name }}</td>
                     <td>{{ inwentura.project.customer.name }}</td>
