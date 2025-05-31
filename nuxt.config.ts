@@ -19,6 +19,7 @@ export default defineNuxtConfig({
     port: 3000
   },
   nitro: {
+    preset: "cloudflare-pages",
     prerender: {
       autoSubfolderIndex: false
     }
